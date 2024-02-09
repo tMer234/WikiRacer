@@ -19,18 +19,10 @@ public class urlLink {
         return this.url;
     }
 
-    public void setSimilarity(List<urlLink> links, List<urlLink> targetLinks) {
-        Set<String> targetUrls = targetLinks.stream()
-                .map(urlLink::getUrl)
-                .collect(Collectors.toSet());
+    public void setSimilarity(List<String> links, List<String> targetLinks) {
 
-        long num = links.stream()
-                .map(urlLink::getUrl) // Extracting URLs from the list of links
-                .distinct() // Ensuring distinct URLs
-                .filter(targetUrls::contains) // Filtering URLs present in targetUrls Set
-                .count();
-
-        this.similarity = (int) num;
+        links.retainAll(targetLinks);
+        this.similarity = links.size();
     }
 
     public urlLink getParent() {
