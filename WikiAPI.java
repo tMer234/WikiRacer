@@ -49,13 +49,18 @@ public class WikiAPI {
             // next page examination and category exceptions (avoid getting stuck in birth
             // and death pages)
             if ((element.html().equals("next page") || (element.html().equals("next 50") && wlhSearch))
-                    && !catSearch && !element.attr("href").contains("births")
-                    && !element.attr("href").contains("deaths")
-                    && !element.attr("href").contains("Living_people") && !element.attr("href").contains("CS1_maint")) {
+                    && !catSearch && !element.attr("href").contains("birth")
+                    && !element.attr("href").contains("death")
+                    && !element.attr("href").contains("Living_people") && !element.attr("href").contains("CS1_maint")
+                    && !element.attr("href").contains("Disambiguation")
+                    && !element.attr("href").contains("Year_of_death")
+                    && !element.attr("href").contains("Possibly_living")
+                    && !element.attr("href").contains("Year_of_birth")) {
                 nextPage = element;
             }
             String href = element.attr("href");
-            if (href.startsWith("/wiki") && !href.contains("births") && !href.contains("deaths")) {
+            if (href.startsWith("/wiki") && !href.contains("birth") && !href.contains("death")
+                    && !href.contains("Living_people")) {
                 if (catSearch == true) {
                     if (href.contains("Category:") && !href.contains("Tracking_categories")
                             && !href.contains("Hidden_categories") && !href.contains("_authors_list")) {
@@ -69,7 +74,7 @@ public class WikiAPI {
                             && !href.contains("(identifier)") && !href.contains("Portal:")
                             && !href.contains("Tracking_categories")
                             && !href.contains("Hidden_categories") && !href.contains("Stub_categories")
-                            && !href.contains("ISO") && !href.contains("CS1_maint")) {
+                            && !href.contains("ISO") && !href.contains("CS1_maint") && !href.contains("User:")) {
                         addedUrls.add(href);
                         links.add(href);
                     }
@@ -101,30 +106,31 @@ public class WikiAPI {
 
         urlLink target = new urlLink(end);
         List<String> targetCategories = new ArrayList<>(getLinks(end, true, false));
-        // // links on target page
+
+        // links on target page
         targetCategories.removeIf(t -> (t.contains("births") ||
                 t.contains("deaths"))); // birth and death pages are too
-        // // long to use
+        // // // long to use
         List<String> targetLinks = getLinks(end, false, true);
-        List<String> extraLinks = new ArrayList<>();
-        if (targetLinks.size() < 20) {
-            for (String t : targetLinks) {
-                if (getLinks(t, false, true).size() < 20) {
-                    extraLinks.addAll((getLinks(end, false, true)));
-                }
-            }
-        }
-        targetLinks.addAll(extraLinks);
+
+        // List<String> extraLinks = new ArrayList<>();
+        // if (targetLinks.size() < 30) {
+        // for (String t : targetLinks) {
+        // if (getLinks(t, false, true).size() < 20) {
+        // extraLinks.addAll((getLinks(end, false, true)));
+        // }
+        // }
+        // }
+        // targetLinks.addAll(extraLinks);
+
         System.out.println(targetLinks.size());
         if (targetLinks.size() < 100) {
-            for (String t : targetCategories) {
-                // System.out.println("got here");
 
-                List<String> targets = new ArrayList<>(getLinks(t, false, false));
-                for (String i : targets) {
-                    targetLinks.add(i);
-                }
+            List<String> targets = new ArrayList<>(getLinks(targetCategories.get(0), false, false));
+            for (String i : targets) {
+                targetLinks.add(i);
             }
+
         }
 
         System.out.println(targetLinks.size());
@@ -240,9 +246,9 @@ public class WikiAPI {
                     System.out.println("Reverting to " + currentLink.getUrl());
                 }
 
-                for (urlLink l : pQueue) {
-                    visitedUrls.add(l.getUrl());
-                }
+                // for (urlLink l : pQueue) {
+                // visitedUrls.add(l.getUrl());
+                // }
                 pQueue.clear();
 
             }
