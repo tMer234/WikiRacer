@@ -15,8 +15,8 @@ public class WikiRacer {
 
     public static void main(String[] args) {
         // final String base_url = "https://en.wikipedia.org/wiki/";
-        String start = "Hang_Chineh";
-        String end = "2001_Irish_Masters";
+        String start = "Antique_(band)";
+        String end = "Bufoceratias";
 
         final long startTime = System.currentTimeMillis();
         WikiAPI wiki = new WikiAPI();
