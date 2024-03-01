@@ -1,9 +1,5 @@
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.util.stream.Collectors;
 import java.io.IOException;
@@ -19,92 +15,10 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 
 public class WikiAPI {
-    private final String content_id = "mw-content-text";
-    private static final String base_url = "https://en.wikipedia.org";
+
     private static final String base = "https://en.wikipedia.org/w/api.php?action=query&format=json";
 
     HttpClient client = HttpClient.newBuilder().build();
-
-    public List<String> getLinks(String url, boolean catSearch, boolean wlhSearch) {
-        List<String> links = new ArrayList<>();
-        Document document;
-        if (wlhSearch) {
-            url = "/wiki/Special:WhatLinksHere/" + url.replace("wiki", "").substring(2);
-        }
-
-        try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .GET()
-                    .uri(URI.create(base_url + url))
-                    .build();
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            document = Jsoup.parse(response.body());
-        } catch (IOException | InterruptedException ex) {
-            throw new RuntimeException(ex);
-        }
-        if (document.getElementById("mw-hidden-catlinks") != null) {
-            document.getElementById("mw-hidden-catlinks").remove();
-        }
-
-        document.getElementsByClass("vector-body-before-content").remove();
-
-        Elements content = document.getElementById("bodyContent").select("a[href]");
-
-        Set<String> addedUrls = new HashSet<>();
-        Element nextPage = null;
-        for (Element element : content) {
-
-            // next page examination and category exceptions (avoid getting stuck in birth
-            // and death pages)
-            if ((element.html().equals("next page") || (element.html().equals("next 50") && wlhSearch))
-                    && !catSearch && !element.attr("href").contains("birth")
-                    && !element.attr("href").contains("death")
-                    && !element.attr("href").contains("Living_people") && !element.attr("href").contains("CS1_maint")
-                    && !element.attr("href").contains("Disambiguation")
-                    && !element.attr("href").contains("Year_of_death")
-                    && !element.attr("href").contains("Possibly_living")
-                    && !element.attr("href").contains("Year_of_birth")) {
-                nextPage = element;
-            }
-            String href = element.attr("href");
-            if (href.startsWith("/wiki") && !href.contains("birth") && !href.contains("death")
-                    && !href.contains("Living_people")) {
-                if (catSearch == true) {
-                    if (href.contains("Category:") && !href.contains("Tracking_categories")
-                            && !href.contains("Hidden_categories") && !href.contains("_authors_list")) {
-                        addedUrls.add(href);
-                        links.add(href);
-                    }
-                } else {
-                    if (!href.contains("/Special:") && !href.contains("/Help:") && !href.contains("/File:")
-                            && !href.contains("/Template:") && !href.contains("/Template_talk:")
-                            && !href.contains("/Wikipedia:") && !href.contains("/Talk:")
-                            && !href.contains("(identifier)") && !href.contains("Portal:")
-                            && !href.contains("Tracking_categories")
-                            && !href.contains("Hidden_categories") && !href.contains("Stub_categories")
-                            && !href.contains("ISO") && !href.contains("CS1_maint") && !href.contains("User:")) {
-                        addedUrls.add(href);
-                        links.add(href);
-                    }
-                }
-
-            }
-
-        }
-        String nextPageHref = null;
-        if (nextPage != null) {
-            nextPageHref = nextPage.attr("href");
-
-        }
-        // System.out.println(nextPageHref);
-        // remove duplicate links
-        if (nextPageHref != null) {
-
-            System.out.println("examining extra links: " + nextPageHref);
-            links.addAll(getLinks(nextPageHref, false, false));
-        }
-        return links;
-    }
 
     public List<String> APIgetLinks(String url, String pr) {
         url = url.replace("/wiki/", "");
