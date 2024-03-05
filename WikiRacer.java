@@ -18,8 +18,8 @@ public class WikiRacer {
 
     public static void main(String[] args) {
         // final String base_url = "https://en.wikipedia.org/wiki/";
-        String start = "Masters_School";
-        String end = "The_Haunting_Hour:_The_Series";
+        String start = "Episcia_cupreata";
+        String end = "1968_Philadelphia_Eagles_season";
 
         // System.out.println("Start: " + start);
         // System.out.println("End: " + end);
@@ -31,7 +31,7 @@ public class WikiRacer {
         // so from there I can get to anything
         List<String> path_1 = wiki.findWikiPath("/wiki/" + start, "/wiki/Demonym");
         System.out.println("Path_1 found\n");
-        List<String> path_2 = wiki.findWikiPath("/wiki/Demonym", "/wiki/" + end);
+        List<String> path_2 = wiki.findWLHPATH("/wiki/" + end, "/wiki/Demonym");
         final long endTime = System.currentTimeMillis();
 
         System.out.print("\nPath Found in " + +(double) (endTime - startTime) / 1000
@@ -43,9 +43,9 @@ public class WikiRacer {
             }
         }
         System.out.print(" --> ");
-        for (int i = 1; i < path_2.size(); i++) {
+        for (int i = path_2.size() - 2; i >= 0; i--) {
             System.out.print(path_2.get(i).toString().replace("/wiki/", ""));
-            if (i != path_2.size() - 1) {
+            if (i != 0) {
                 System.out.print(" --> ");
             }
         }
