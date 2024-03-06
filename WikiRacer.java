@@ -19,8 +19,8 @@ public class WikiRacer {
     }
 
     public static void main(String[] args) {
-        String start = "Cahya_Supriadi";
-        String end = "Oluyoro_Catholic_Hospital";
+        String start = "Goose_Van_Schaick";
+        String end = "Nassim_Shamama";
         final long startTime = System.currentTimeMillis();
         WikiAPI wiki = new WikiAPI();
 
