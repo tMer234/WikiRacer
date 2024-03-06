@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.net.URLEncoder;
 
+//THIS CODE REQUIRES THE ORG.JSON LIBRARY FOUND HERE: https://repo1.maven.org/maven2/org/json/json/20240205/
+//Download the json-20240205.jar file from this link and install in referenced libraries
 public class WikiRacer {
 
     public static void DisplayPath(List<String> p) {
@@ -17,21 +19,15 @@ public class WikiRacer {
     }
 
     public static void main(String[] args) {
-        // final String base_url = "https://en.wikipedia.org/wiki/";
-        String start = "Episcia_cupreata";
-        String end = "1968_Philadelphia_Eagles_season";
-
-        // System.out.println("Start: " + start);
-        // System.out.println("End: " + end);
+        String start = "Cahya_Supriadi";
+        String end = "Oluyoro_Catholic_Hospital";
         final long startTime = System.currentTimeMillis();
         WikiAPI wiki = new WikiAPI();
 
-        // get to the Demonym page: "A demonym is is a word that identifies a group of
-        // people (inhabitants, residents, natives) in relation to a particularplace
-        // so from there I can get to anything
-        List<String> path_1 = wiki.findWikiPath("/wiki/" + start, "/wiki/Demonym");
+        // Every page can always get to the Demonym page within at least 4-5 links
+        List<String> path_1 = wiki.findWikiPath("/wiki/" + start, "/wiki/Demonym", "down");
         System.out.println("Path_1 found\n");
-        List<String> path_2 = wiki.findWLHPATH("/wiki/" + end, "/wiki/Demonym");
+        List<String> path_2 = wiki.findWikiPath("/wiki/" + end, "/wiki/Demonym", "up");
         final long endTime = System.currentTimeMillis();
 
         System.out.print("\nPath Found in " + +(double) (endTime - startTime) / 1000
