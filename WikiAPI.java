@@ -144,7 +144,6 @@ public class WikiAPI {
 
         }
         // select the first link found on the target page to compare to
-        boolean pathFound = false;
         // current opened link
         urlLink currentLink = new urlLink(start);
 
@@ -157,7 +156,7 @@ public class WikiAPI {
         double currentBestMatch = 0;
         List<String> currentChildren = new ArrayList<>();
 
-        while (!pathFound) {
+        while (true) {
             currentBestMatch = currentLink.getSimilarity();
             System.out.println("CurrentBestMatch: " + currentBestMatch);
             System.out.println(currentLink.getUrl() + " " + currentLink.getSimilarity());
@@ -176,7 +175,6 @@ public class WikiAPI {
             }
             if (currentChildren.contains(end)) { // if the target is on the current page return path
                 currentLink = new urlLink(end, currentLink);
-                pathFound = true;
                 while (currentLink.getParent() != null) {
                     path.add(currentLink.getParent().getUrl());
                     currentLink = currentLink.getParent();
@@ -184,6 +182,7 @@ public class WikiAPI {
                 // reverse the path so it is ordered from start to finish
                 Collections.reverse(path);
                 path.add(target.getUrl());
+                // break out of
                 break;
 
             }
