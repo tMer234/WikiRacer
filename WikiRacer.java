@@ -21,8 +21,8 @@ public class WikiRacer {
 
     public static void main(String[] args) {
         // PLACE START AND END LINKS HERE
-        String start = URLEncoder.encode("Clepsis_moeschleriana", StandardCharsets.UTF_8);
-        String end = URLEncoder.encode("Mosquito_River_(Tocantins)", StandardCharsets.UTF_8);
+        String start = URLEncoder.encode("Grunwald,_Poznań", StandardCharsets.UTF_8);
+        String end = URLEncoder.encode("Heliothis_galatheae", StandardCharsets.UTF_8);
         final long startTime = System.currentTimeMillis();
         WikiAPI wiki = new WikiAPI();
         // Every page can always get to the Demonym page within at least 3-4 jumps, so I
@@ -36,28 +36,27 @@ public class WikiRacer {
             List<String> path_2 = wiki.findWikiPath("/wiki/" + end, "/wiki/Demonym", "up");
             Collections.reverse(path_2);
             path_2.remove(0);
+            final long endTime = System
+                    .currentTimeMillis();
+            System.out.print("\nPath Found in " + +(double) (endTime - startTime) / 1000 + " seconds:\n");
 
             // see if intersection between two paths occured before the Demonym page, if so
             // path without going through demonym or subsequent middle page exists
-            List<String> lastPage1Links = wiki.APIgetLinks("/wiki/" + path_1.get(path_1.size() - 2), "links", null);
+            List<String> lastPage1Links = wiki.APIgetLinks("/wiki/" +
+                    path_1.get(path_1.size() - 2), "links", null);
 
             while (lastPage1Links.contains(path_2.get(0))) {
                 System.out.println(path_1.get(path_1.size() - 1) + " removed");
                 path_1.remove(path_1.size() - 1);
                 if (path_1.size() > 1) {
-                    lastPage1Links = wiki.APIgetLinks("/wiki/" + path_1.get(path_1.size() - 2), "links", null);
+                    lastPage1Links = wiki.APIgetLinks("/wiki/" + path_1.get(path_1.size() - 2),
+                            "links", null);
                 } else {
                     break;
                 }
             }
-
-            final long endTime = System
-                    .currentTimeMillis();
-            System.out.print("\nPath Found in " + +(double) (endTime - startTime) / 1000 + " seconds:\n");
-
+            path_1.addAll(path_2);
             DisplayPath(path_1);
-            System.out.print(" --> ");
-            DisplayPath(path_2);
         }
 
     }

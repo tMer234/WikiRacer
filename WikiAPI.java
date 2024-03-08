@@ -37,7 +37,7 @@ public class WikiAPI {
             String cont = null;
             try {
 
-                while (true) {
+                while (links.size() < 10000) {
                     String re = "";
                     if (url.contains("Category:") || url.contains("category:")) {
                         re = base + "&list=categorymembers&cmtitle=" + url
@@ -143,8 +143,6 @@ public class WikiAPI {
             targetLinks = APIgetLinks(end, "links", "PLACEHOLDER");
 
         }
-        System.out.println(targetLinks.size());
-
         // select the first link found on the target page to compare to
         boolean pathFound = false;
         // current opened link
@@ -205,6 +203,7 @@ public class WikiAPI {
                 currentChildrenURL.removeIf(s -> s.getUrl().contains("User")); // never go into User links
                 currentChildrenURL.removeIf(s -> visitedUrls.contains(s.getUrl())); // remove already visited links to
                                                                                     // avoid loops
+                currentChildrenURL.removeIf(s -> s.getUrl().contains("Wikipedia") || s.getUrl().contains("talk"));
                 currentChildrenURL.removeIf(s -> s.getUrl().contains("January") ||
                         s.getUrl().contains("February") || s.getUrl().contains("March") ||
                         s.getUrl().contains("April") || s.getUrl().contains("May") ||
