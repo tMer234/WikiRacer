@@ -184,58 +184,58 @@ public class WikiAPI {
                 // reverse the path so it is ordered from start to finish
                 Collections.reverse(path);
                 path.add(target.getUrl());
-
-            } else {
-
-                List<String> tempChildren = new ArrayList<String>(currentChildren);
-                currentChildren.retainAll(targetLinks); // get all similar links
-                // if no similar links, examine all
-                if (currentChildren.size() == 0) {
-                    currentChildren = tempChildren;
-
-                }
-
-                urlLink curlLink = currentLink;
-                // map from list of urls to list of urlLinks
-                List<urlLink> currentChildrenURL = currentChildren.stream().distinct()
-                        .map(l -> new urlLink(l, curlLink))
-                        .collect(Collectors.toList());
-                currentChildrenURL.removeIf(s -> s.getUrl().contains("User")); // never go into User links
-                currentChildrenURL.removeIf(s -> visitedUrls.contains(s.getUrl())); // remove already visited links to
-                                                                                    // avoid loops
-                currentChildrenURL.removeIf(s -> s.getUrl().contains("Wikipedia") || s.getUrl().contains("talk"));
-                currentChildrenURL.removeIf(s -> s.getUrl().contains("January") ||
-                        s.getUrl().contains("February") || s.getUrl().contains("March") ||
-                        s.getUrl().contains("April") || s.getUrl().contains("May") ||
-                        s.getUrl().contains("June") || s.getUrl().contains("July") ||
-                        s.getUrl().contains("August") || s.getUrl().contains("September") ||
-                        s.getUrl().contains("October") || s.getUrl().contains("November") ||
-                        s.getUrl().contains("December")); // avoid getting stuck in
-                                                          // dates;
-                // make pQueue, find similarities, add to pqueue, select most common link
-                Comparator<urlLink> similarityCompare = Comparator.comparing(urlLink::getSimilarity);
-                PriorityQueue<urlLink> pQueue = new PriorityQueue<urlLink>(similarityCompare.reversed());
-
-                for (urlLink link : currentChildrenURL) {
-                    // set the similarity
-                    link.setSimilarity(APIgetLinks(link.getUrl(), "links", "PLACEHOLDER"), targetLinks);
-
-                    System.out.println(" examining: " + link.getUrl() + " " +
-                            link.getSimilarity());
-                    pQueue.add(link);
-
-                    // if a new better link is found, break without examining the rest, results in
-                    // this alogirthm being fast but not finding the shortest possible path
-                    if (link.getSimilarity() > currentBestMatch) {
-                        break;
-                    }
-                }
-                // set the new link, add it to visitedURLs, clear the priority queue
-                currentLink = pQueue.poll();
-                visitedUrls.add(currentLink.getUrl());
-                pQueue.clear();
+                break;
 
             }
+
+            List<String> tempChildren = new ArrayList<String>(currentChildren);
+            currentChildren.retainAll(targetLinks); // get all similar links
+            // if no similar links, examine all
+            if (currentChildren.size() == 0) {
+                currentChildren = tempChildren;
+
+            }
+
+            urlLink curlLink = currentLink;
+            // map from list of urls to list of urlLinks
+            List<urlLink> currentChildrenURL = currentChildren.stream().distinct()
+                    .map(l -> new urlLink(l, curlLink))
+                    .collect(Collectors.toList());
+            currentChildrenURL.removeIf(s -> s.getUrl().contains("User")); // never go into User links
+            currentChildrenURL.removeIf(s -> visitedUrls.contains(s.getUrl())); // remove already visited links to
+                                                                                // avoid loops
+            currentChildrenURL.removeIf(s -> s.getUrl().contains("Wikipedia") || s.getUrl().contains("talk"));
+            currentChildrenURL.removeIf(s -> s.getUrl().contains("January") ||
+                    s.getUrl().contains("February") || s.getUrl().contains("March") ||
+                    s.getUrl().contains("April") || s.getUrl().contains("May") ||
+                    s.getUrl().contains("June") || s.getUrl().contains("July") ||
+                    s.getUrl().contains("August") || s.getUrl().contains("September") ||
+                    s.getUrl().contains("October") || s.getUrl().contains("November") ||
+                    s.getUrl().contains("December")); // avoid getting stuck in
+                                                      // dates;
+            // make pQueue, find similarities, add to pqueue, select most common link
+            Comparator<urlLink> similarityCompare = Comparator.comparing(urlLink::getSimilarity);
+            PriorityQueue<urlLink> pQueue = new PriorityQueue<urlLink>(similarityCompare.reversed());
+
+            for (urlLink link : currentChildrenURL) {
+                // set the similarity
+                link.setSimilarity(APIgetLinks(link.getUrl(), "links", "PLACEHOLDER"), targetLinks);
+
+                System.out.println(" examining: " + link.getUrl() + " " +
+                        link.getSimilarity());
+                pQueue.add(link);
+
+                // if a new better link is found, break without examining the rest, results in
+                // this alogirthm being fast but not finding the shortest possible path
+                if (link.getSimilarity() > currentBestMatch) {
+                    break;
+                }
+            }
+            // set the new link, add it to visitedURLs, clear the priority queue
+            currentLink = pQueue.poll();
+            visitedUrls.add(currentLink.getUrl());
+            pQueue.clear();
+
         }
         return path;
 
